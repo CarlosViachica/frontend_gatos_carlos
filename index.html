@@ -104,13 +104,7 @@ body {
 </div>
 
 <script>
-
-</script>
-
-</body>
-</html>
-
-const BACKEND_URL = "https://backend-carlos-gatos.onrender.com/gato";
+const BACKEND_URL = "https://backend-carlos-gatos.onrender.com";
 
 // Vista previa de imagen
 document.getElementById("imagen").addEventListener("change", (e) => {
@@ -143,7 +137,7 @@ document.getElementById("formGato").addEventListener("submit", async (e) => {
   }
 
   try {
-    const respuesta = await fetch(${BACKEND_URL}/gato, {
+    const respuesta = await fetch(`${BACKEND_URL}/gato`, {
       method: "POST",
       body: formData
     });
@@ -154,7 +148,7 @@ document.getElementById("formGato").addEventListener("submit", async (e) => {
       resultadoDiv.className = "alert alert-success mt-4";
       resultadoDiv.innerHTML = data.mensaje +
         (data.imagenUrl
-          ? <br><img src="${data.imagenUrl}" style="max-width:100%;margin-top:10px;border-radius:8px;">
+          ? `<br><img src="${data.imagenUrl}" style="max-width:100%;margin-top:10px;border-radius:8px;">`
           : "");
 
       // Limpiar formulario
@@ -180,10 +174,10 @@ document.getElementById("formGato").addEventListener("submit", async (e) => {
 // ================= Cargar y mostrar gatos =================
 async function cargarGatos() {
   const contenedor = document.getElementById("listaGatos");
-  contenedor.innerHTML = <div class="col-12 loading">Cargando gatos...</div>;
+  contenedor.innerHTML = `<div class="col-12 loading">Cargando gatos...</div>`;
 
   try {
-    const respuesta = await fetch(${BACKEND_URL}/gato);
+    const respuesta = await fetch(`${BACKEND_URL}/gato`);
     const gatos = await respuesta.json();
 
     if (!respuesta.ok) {
@@ -240,3 +234,7 @@ document.getElementById("btnRecargar").addEventListener("click", cargarGatos);
 
 // Cargar gatos al iniciar la página
 cargarGatos();
+</script>
+
+</body>
+</html>
