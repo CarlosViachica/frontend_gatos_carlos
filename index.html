@@ -202,6 +202,7 @@
             <h2>Registro de Gato</h2>
 
             <form id="formGato">
+                <input type="hidden" id="gatoId" value="">
                 <div class="form-group">
                     <label for="nombre">Nombre</label>
                     <input type="text" class="form-control" id="nombre" required placeholder="Ej: Michi">
@@ -230,7 +231,8 @@
                     <img id="preview" alt="Vista previa">
                 </div>
 
-                <button type="submit" class="btn-primary">Registrar Gato</button>
+                <button type="submit" class="btn-primary" id="btnSubmit">Registrar Gato</button>
+                <button type="button" class="btn-secondary" id="btnCancelar" style="display:none;margin-top:8px;">Cancelar edición</button>
             </form>
 
             <div id="resultado" role="alert"></div>
@@ -248,96 +250,7 @@
         </div>
     </div>
 
-    <script>
-        const BACKEND_URL = 'https://backend-carlos-gatos.onrender.com/gatos';
-
-        const resultadoDiv = document.getElementById('resultado');
-        const listaGatos = document.getElementById('listaGatos');
-
-        document.getElementById('imagen').addEventListener('change', (e) => {
-            const file = e.target.files[0];
-            const preview = document.getElementById('preview');
-
-            if (file) {
-                preview.src = URL.createObjectURL(file);
-                preview.style.display = 'block';
-            } else {
-                preview.src = '';
-                preview.style.display = 'none';
-            }
-        });
-
-        document.getElementById('formGato').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            resultadoDiv.style.display = 'none';
-
-            const formData = new FormData();
-            formData.append('nombre', document.getElementById('nombre').value.trim());
-            formData.append('edad', document.getElementById('edad').value);
-            formData.append('peso', document.getElementById('peso').value);
-            formData.append('raza', document.getElementById('raza').value.trim());
-
-            const imagenInput = document.getElementById('imagen');
-            if (imagenInput.files.length > 0) {
-                formData.append('imagen', imagenInput.files[0]);
-            }
-
-            try {
-                const respuesta = await fetch(BACKEND_URL, {
-                    method: 'POST',
-                    body: formData
-                });
-
-                const data = await respuesta.json();
-
-                if (respuesta.ok) {
-                    resultadoDiv.className = 'alert-success';
-                    resultadoDiv.innerHTML = data.mensaje + (data.imagenUrl ? `<br><img src="${data.imagenUrl}" style="max-width:100%;margin-top:10px;border-radius:8px;">` : '');
-                    document.getElementById('formGato').reset();
-                    document.getElementById('preview').style.display = 'none';
-                    await cargarGatos();
-                } else {
-                    resultadoDiv.className = 'alert-danger';
-                    resultadoDiv.textContent = data.mensaje || 'Error al registrar el gato';
-                }
-
-                resultadoDiv.style.display = 'block';
-            } catch (error) {
-                console.error(error);
-                resultadoDiv.className = 'alert-danger';
-                resultadoDiv.textContent = 'Error de conexión con el servidor.';
-                resultadoDiv.style.display = 'block';
-            }
-        });
-
-        async function cargarGatos() {
-            try {
-                const respuesta = await fetch(BACKEND_URL);
-                const gatos = await respuesta.json();
-
-                if (!Array.isArray(gatos) || gatos.length === 0) {
-                    listaGatos.innerHTML = '<div class="empty-state">Error al cargar los gatos. Intenta de nuevo.</div>';
-                    return;
-                }
-
-                listaGatos.innerHTML = gatos.map(gato => `
-                    <div class="gato-item">
-                        <img src="${gato.imagenUrl || 'https://via.placeholder.com/400x250?text=Sin+imagen'}" alt="${gato.nombre}">
-                        <h5>${gato.nombre}</h5>
-                        <p><strong>Edad:</strong> ${gato.edad} años</p>
-                        <p><strong>Peso:</strong> ${gato.peso} kg</p>
-                        <p><strong>Raza:</strong> ${gato.raza}</p>
-                    </div>
-                `).join('');
-            } catch (error) {
-                console.error(error);
-                listaGatos.innerHTML = '<div class="empty-state">Error al cargar los gatos. Intenta de nuevo.</div>';
-            }
-        }
-
-        document.getElementById('btnActualizar').addEventListener('click', cargarGatos);
-        cargarGatos();
-    </script>
+    <script src="app.js"></script>
 </body>
 
 </html>
