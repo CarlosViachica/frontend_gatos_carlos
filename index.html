@@ -279,28 +279,7 @@
         limpiarFormulario();
       });
 
-      async function eliminarGato(id, nombre) {
-        const confirmar = confirm(`¿Estás seguro de eliminar a "${nombre}"?`);
-        if (!confirmar) return;
-
-        try {
-          const respuesta = await fetch(`${BACKEND_URL}/gato/${id}`, {
-            method: "DELETE",
-          });
-
-          const data = await respuesta.json();
-
-          if (respuesta.ok) {
-            alert(data.mensaje);
-            cargarGatos(); // recargar la lista
-          } else {
-            alert(data.mensaje || "Error al eliminar el gato");
-          }
-        } catch (error) {
-          console.error(error);
-          alert("Error de conexión con el servidor.");
-        }
-      }
+      
 
       // ========== Cargar y mostrar gatos ==========
       async function cargarGatos() {
@@ -326,9 +305,7 @@
             return;
           }
 
-          contenedor.innerHTML = gatos
-            .map(
-              (gato) => `
+          contenedor.innerHTML = gatos.map(gato => `
 <div class="col-12 col-sm-6 col-xl-4">
   <div class="card gato-card h-100">
     <img src="${gato.imagenUrl}" class="card-img-top gato-img" alt="${gato.nombre}"
@@ -342,7 +319,7 @@
       </p>
       <p class="card-text">
         <small class="text-muted">
-          Registrado: ${new Date(gato.fecha).toLocaleDateString("es-ES")}
+          Registrado: ${new Date(gato.fecha).toLocaleDateString('es-ES')}
         </small>
       </p>
       <div class="mt-auto d-flex gap-2">
@@ -358,9 +335,7 @@
     </div>
   </div>
 </div>
-`,
-            )
-            .join("");
+`).join("");
         } catch (error) {
           console.error(error);
           contenedor.innerHTML = `
@@ -379,6 +354,30 @@
 
       // Cargar gatos al iniciar la página
       cargarGatos();
+
+      async function eliminarGato(id, nombre) {
+        const confirmar = confirm(`¿Estás seguro de eliminar a "${nombre}"?`);
+        if (!confirmar) return;
+
+        try {
+          const respuesta = await fetch(`${BACKEND_URL}/gato/${id}`, {
+            method: "DELETE",
+          });
+
+          const data = await respuesta.json();
+
+          if (respuesta.ok) {
+            alert(data.mensaje);
+            cargarGatos(); // recargar la lista
+          } else {
+            alert(data.mensaje || "Error al eliminar el gato");
+          }
+        } catch (error) {
+          console.error(error);
+          alert("Error de conexión con el servidor.");
+        }
+      }
+
     </script>
   </body>
 </html>
